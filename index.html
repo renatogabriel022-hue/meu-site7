@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>App Mesas — Reservas Inteligentes</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet (MANTIDO) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+:root{
+  --bg:#000;
+  --card:#141414;
+  --accent:#0d6efd;
+  --muted:#adb5bd;
+}
+
+/* 🔥 ÚNICA ALTERAÇÃO: FUNDO */
+body{
+  background:
+    radial-gradient(1400px 700px at 15% -10%, rgba(13,110,253,0.10), transparent 45%),
+    radial-gradient(1200px 600px at 85% 15%, rgba(255,255,255,0.035), transparent 50%),
+    linear-gradient(180deg,#0b0b0b 0%, #000 70%);
+
+  background-attachment: fixed;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+}
+
+/* ===== CSS ORIGINAL (SEM ALTERAÇÕES) ===== */
+.section{ padding:4rem 0; }
+h2,h3{ text-align:center; margin-bottom:2rem; }
+p{ color:#ddd; line-height:1.6; }
+
+.navbar{ background:#111; }
+
+.hero{
+  background:linear-gradient(180deg,#111,#000);
+  padding:5rem 0;
+}
+
+.card{
+  background:var(--card);
+  border:none;
+  box-shadow:0 10px 25px rgba(0,0,0,.6);
+}
+
+.img-cover{
+  height:200px;
+  width:100%;
+  object-fit:cover;
+}
+
+.text-muted{ color:var(--muted)!important; }
+
+iframe,video,audio{
+  display:block;
+  margin:1.5rem auto;
+  max-width:100%;
+}
+
+form{ max-width:500px; margin:auto; }
+
+footer{
+  background:#111;
+  padding:2rem;
+  text-align:center;
+  color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">🍽️ App Mesas</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="menu" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Início</a></li>
+        <li class="nav-item"><a class="nav-link" href="#restaurantes">Restaurantes</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reserva">Reservas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contactos">Contactos</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero text-center">
+  <div class="container">
+    <h1 class="display-5 fw-bold">Reservas Inteligentes para Restaurantes</h1>
+    <p class="lead mt-3">
+      Descobre restaurantes, vê a lotação em tempo real  
+      e reserva a melhor mesa com apenas alguns cliques.
+    </p>
+    <a href="#restaurantes" class="btn btn-primary btn-lg mt-3">
+      Explorar Restaurantes
+    </a>
+  </div>
+</section>
+
+<!-- RESTAURANTES -->
+<section id="restaurantes" class="section">
+  <div class="container">
+    <h2>Restaurantes em Destaque</h2>
+
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100">
+          <img src="taberna_trovador.jpg" class="img-cover">
+          <div class="card-body text-center">
+            <h5>Taberna Trovador</h5>
+            <p class="text-muted">⭐ 4,5 · Ocupação 40%</p>
+            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalReserva">
+              Reservar Mesa
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100">
+          <img src="mediterraneo.jpg" class="img-cover">
+          <div class="card-body text-center">
+            <h5>Mediterrâneo</h5>
+            <p class="text-muted">⭐ 4,9 · Ocupação 60%</p>
+            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalReserva">
+              Reservar Mesa
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100">
+          <img src="taberna_davo.jpg" class="img-cover">
+          <div class="card-body text-center">
+            <h5>Taberna D’avó</h5>
+            <p class="text-muted">⭐ 4,5 · Ocupação 30%</p>
+            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalReserva">
+              Reservar Mesa
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100">
+          <img src="republica_polvo.jpg" class="img-cover">
+          <div class="card-body text-center">
+            <h5>República do Polvo</h5>
+            <p class="text-muted">⭐ 4,9 · Ocupação 50%</p>
+            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalReserva">
+              Reservar Mesa
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MINHAS RESERVAS -->
+<section id="reserva" class="section bg-dark">
+  <div class="container text-center">
+    <h2>Minhas Reservas</h2>
+    <p class="text-muted">Ainda não realizaste nenhuma reserva.</p>
+    <div id="listaReservas" class="mt-4"></div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre" class="section">
+  <div class="container">
+    <h2>Sobre o App</h2>
+    <p class="text-center">
+      O <strong>App Mesas</strong> utiliza tecnologia inteligente  
+      para ajudar clientes a escolherem o melhor restaurante.
+    </p>
+  </div>
+ <!-- MULTIMÉDIA -->
+<section class="section bg-dark">
+  <div class="container text-center">
+    <h2>Experiência Visual</h2>
+
+    <video width="560" height="315" controls>
+      <source src="video project.mp4" type="video/mp4">
+    </video>
+
+    <audio controls>
+      <source src="som.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section class="section">
+  <div class="container text-center">
+    <h2>Onde Estamos</h2>
+    <p class="text-muted">Guimarães, Portugal</p>
+
+    <div class="ratio ratio-16x9">
+      <iframe
+        src="https://www.google.com/maps?q=Guimar%C3%A3es,Portugal&output=embed"
+        style="border:0;"
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTOS -->
+<section id="contactos" class="section">
+  <div class="container">
+    <h2>Contactos</h2>
+    <form>
+      <input class="form-control mb-3" placeholder="Nome">
+      <input class="form-control mb-3" placeholder="Email">
+      <textarea class="form-control mb-3" placeholder="Mensagem"></textarea>
+      <button class="btn btn-primary w-100">Enviar Mensagem</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  © 2025 App Mesas — Projeto Académico
+</footer>
+
+<!-- MODAL RESERVA -->
+<div class="modal fade" id="modalReserva" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">Reservar Mesa</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formReserva">
+          <input id="nome" class="form-control mb-3" placeholder="Nome" required>
+          <input id="telefone" class="form-control mb-3" placeholder="Telefone" required>
+          <input id="data" type="date" class="form-control mb-3" required>
+          <input id="hora" type="time" class="form-control mb-3" required>
+          <select id="local" class="form-select mb-3" required>
+            <option value="">Preferência de lugar</option>
+            <option>Interno</option>
+            <option>Externo</option>
+            <option>Reservado</option>
+            <option>Perto da saída</option>
+          </select>
+          <button class="btn btn-primary w-100">Confirmar Reserva</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const lista = document.getElementById("listaReservas");
+const texto = document.querySelector("#reserva .text-muted");
+
+function carregar(){
+  const r = JSON.parse(localStorage.getItem("reservas")) || [];
+  lista.innerHTML = "";
+  texto.style.display = r.length ? "none" : "block";
+
+  r.forEach((x,i)=>{
+    lista.innerHTML += `
+      <div class="card p-3 mb-2">
+        <strong>${x.nome}</strong><br>
+        📞 ${x.telefone}<br>
+        📅 ${x.data} ⏰ ${x.hora}<br>
+        📍 ${x.local}<br>
+        <button class="btn btn-danger btn-sm mt-2" onclick="del(${i})">
+          Cancelar Reserva
+        </button>
+      </div>`;
+  });
+}
+
+function del(i){
+  const r = JSON.parse(localStorage.getItem("reservas"));
+  r.splice(i,1);
+  localStorage.setItem("reservas",JSON.stringify(r));
+  carregar();
+}
+
+document.getElementById("formReserva").addEventListener("submit",e=>{
+  e.preventDefault();
+  const r = JSON.parse(localStorage.getItem("reservas")) || [];
+  r.push({
+    nome:nome.value,
+    telefone:telefone.value,
+    data:data.value,
+    hora:hora.value,
+    local:local.value
+  });
+  localStorage.setItem("reservas",JSON.stringify(r));
+  e.target.reset();
+  carregar();
+  bootstrap.Modal.getInstance(modalReserva).hide();
+});
+
+carregar();
+</script>
+
+</body>
+</html>
